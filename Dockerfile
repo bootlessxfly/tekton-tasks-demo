@@ -1,13 +1,13 @@
-FROM golang:alpine as builder
+FROM registry.redhat.io/jboss-webserver-3/webserver30-tomcat8-openshift
 
 WORKDIR /build
 ADD . /build/
 
-RUN GOOS=linux GARCH=amd64 CGO_ENABLED=0 go build -mod=vendor -o api-server .
+RUN GOOS=linux GARCH=amd64 CGO_ENABLED=0 mvn package
 
 FROM scratch
 
 WORKDIR /app
-COPY --from=builder /build/api-server /app/api-server
+COPY --from=builder /build/openshift-tasks.war /app/openshift-tasks.war
 
 CMD [ "/app/api-server" ]
