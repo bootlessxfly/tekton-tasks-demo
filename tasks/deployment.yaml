@@ -2,22 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: api
-  name: api
+    app: tekton-tasks-demo
+  name: tekton-tasks-demo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: api
+      app: tekton-tasks-demo
   template:
     metadata:
       labels:
-        app: api
+        app: tekton-tasks-demo
     spec:
       containers:
-        - image: quay.io/openshift-pipeline/vote-api:latest
+        - image: image-registry.openshift-image-registry.svc:5000/pipeline-tasks-demo/tekton-tasks-demo:latest
           imagePullPolicy: Always
-          name: api
+          name: tekton-tasks-demo
           ports:
-            - containerPort: 9000
+            - containerPort: 8080
               protocol: TCP
