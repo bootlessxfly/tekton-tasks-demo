@@ -22,6 +22,6 @@ RUN $MVN package
 FROM scratch
 
 WORKDIR /opt/jws-5.0/tomcat/bin
-COPY --from=builder /build/target/openshift-tasks.war /opt/jws-5.0/tomcat/webapps
+COPY --from=builder /build/target/openshift-tasks.war /opt/jws-5.0/tomcat/webapps/
 
 CMD [ "./catalina.sh start"]
