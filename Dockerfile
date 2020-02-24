@@ -1,4 +1,4 @@
-FROM registry.redhat.io/jboss-webserver-5/webserver50-tomcat9-openshift
+FROM registry.redhat.io/jboss-webserver-5/webserver50-tomcat9-openshift as builder
 
 WORKDIR /build
 ADD . /build/
@@ -17,8 +17,11 @@ ENV MAVEN_HOME /build/share/maven
 ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 ENV MVN /build/share/maven/bin/mvn
 
-RUN $MVN package
+#RUN $MVN package
 
 FROM scratch
 
+WORKDIR /opt/jws-5.0/tomcat/bin
+#COPY --from=builder /build/target/openshift-tasks.war /opt/jws-5.0/tomcat/webapps
 
+#CMD [ "./catalina.sh start"]
