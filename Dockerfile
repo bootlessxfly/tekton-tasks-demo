@@ -1,4 +1,4 @@
-FROM registry.redhat.io/jboss-webserver-3/webserver30-tomcat8-openshift
+FROM tomcat:8.0-alpine
 
 WORKDIR /build
 ADD . /build/
