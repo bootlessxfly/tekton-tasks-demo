@@ -1,15 +1,12 @@
 FROM registry.redhat.io/jboss-eap-7/eap71-openshift
 
-ENV MAVEN_VERSION 3.3.9
+WORKDIR /build
+ADD . /build/
 
-RUN mkdir -p /usr/share/maven \
-  && curl -fsSL http://apache.osuosl.org/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz \
-    | tar -xzC /usr/share/maven --strip-components=1 \
-  && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
 
-ENV MAVEN_HOME /usr/share/maven
+FROM scratch
 
-VOLUME /root/.m2
+WORKDIR /app
+COPY --from=builder /build/tekton-tasks-demo /app/tekton-tasks-demo
 
-CMD ["mvn"] 
-#RHN-GPS-chwhite
+CMD [ "mvn package" ]
