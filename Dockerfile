@@ -1,4 +1,4 @@
-FROM registry.redhat.io/jboss-webserver-5/webserver50-tomcat9-openshift as builder
+FROM registry.redhat.io/jboss-eap-7/eap71-openshift
 
 WORKDIR /build
 ADD . /build/
