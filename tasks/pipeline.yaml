@@ -45,6 +45,6 @@ spec:
             resource: api-image
       params:
         - name: deployment
-          value: "api"
+          value: "tekton-tasks-demo"
       runAfter:
         - apply-api-manifests
