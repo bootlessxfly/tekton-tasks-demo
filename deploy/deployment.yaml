@@ -19,5 +19,5 @@ spec:
           imagePullPolicy: Always
           name: tekton-tasks-demo
           ports:
-            - containerPort: 9990
+            - containerPort: 8080
               protocol: TCP
