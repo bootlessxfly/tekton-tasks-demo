@@ -19,9 +19,10 @@ ENV MVN /build/share/maven/bin/mvn
 
 RUN $MVN package
 
-#FROM scratch
+FROM scratch
+FROM registry.redhat.io/jboss-eap-7/eap72-openshift
 
-#WORKDIR /opt/jws-5.0/tomcat/bin
+WORKDIR /opt/eap/standalone/deployments/
 COPY --from=builder /build/target/openshift-tasks.war /opt/eap/standalone/deployments/
 
 #CMD [ "./catalina.sh start"]
