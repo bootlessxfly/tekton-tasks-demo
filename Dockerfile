@@ -1,4 +1,4 @@
-FROM registry.redhat.io/jboss-eap-7/eap72-openshift
+FROM registry.redhat.io/jboss-eap-7/eap72-openshift as builder
 
 WORKDIR /build
 ADD . /build/
