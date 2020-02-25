@@ -17,7 +17,7 @@ ENV MAVEN_HOME /build/share/maven
 ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 ENV MVN /build/share/maven/bin/mvn
 
-#RUN $MVN package
+RUN $MVN package
 
 #FROM scratch
 
