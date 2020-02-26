@@ -29,3 +29,27 @@ curl -o setup_nexus3.sh -s https://raw.githubusercontent.com/redhat-gpte-devopsa
 chmod +x setup_nexus3.sh
 ./setup_nexus3.sh admin $NEXUS_PASSWORD http://$(oc get route nexus --template='{{ .spec.host }}')
 rm setup_nexus3.sh
+
+#Create an egde route for nexus
+oc expose dc nexus --port=5000 --name=nexus-registry
+oc create route edge nexus-registry --service=nexus-registry --port=5000
+
+echo "The routes are:"
+oc get routes -n ${GUID}-nexus
+echo "#######################"
+echo "Your Nexus passowrd is:"
+echo $NEXUS_PASSWORD
+echo "#######################"
+echo ""
+echo "These are the insructions for finish up your nexus"
+echo "Set up Nexus"
+echo "1) Using the route for your Nexus, admin as the user id and the Nexus Password you retrieved earlier log into Nexus in a web browser."
+echo "2) You will see the Welcome wizard that prompts you to select a new password for admin."
+
+echo "2a) Use app_deploy as the new password."
+
+echo "3) When prompted to Configure Anonymous Access select the Checkbox to allow anonymous access and click Next."
+
+echo "4) Click Finish to exit the wizard."
+
+echo "5) You may double check that all the repositories (docker, maven-all-public, redhat-ga) are listed under repositories."
