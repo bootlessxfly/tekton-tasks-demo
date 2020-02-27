@@ -5,10 +5,10 @@ oc new-project pipeline-tasks-demo
 oc apply -f tasks/apply_manifest_task.yaml
 oc apply -f tasks/maven-build-task.yaml
 oc apply -f tasks/maven-configmap.yaml
-oc apply -f tasks/pipeline.yaml
-oc apply -f tasks/resources.yaml 
-oc apply -f tasks/secret.yaml
-oc apply -f tasks/serviceacount_botbuilder.yaml
+oc apply -f pipeline/pipeline.yaml
+oc apply -f config/resources.yaml 
+oc apply -f config/secret.yaml
+oc apply -f config/serviceacount_botbuilder.yaml
 oc apply -f tasks/update_deployment_task.yaml
 oc apply -f tasks/oc-task.yaml
 
