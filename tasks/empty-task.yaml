@@ -1,0 +1,13 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: empty-task-stub
+spec:
+
+  steps:
+    - name: sleep-test
+      image: registry.redhat.io/jboss-eap-7/eap72-openshift
+      workingDir: /workspace/source
+      command: ["sleep"]
+      args:
+        - "20"

@@ -1,0 +1,118 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: build-and-deploy
+spec:
+#  serviceAccountName: build-bot
+  resources:
+    - name: api-repo
+      type: git
+    - name: api-image
+      type: image
+
+  tasks:
+    - name: unit-test
+      taskRef:
+        name: maven
+      resources:
+        inputs:
+          - name: source
+            resource: api-repo
+      params: 
+      - name: GOALS
+        value: ["package"]
+      - name: MAVEN_SETTINGS_CONFIGMAP
+        value: custom-maven-settings
+        
+    - name: analysis-test-sonarqube
+      taskRef:
+        name: maven
+      runAfter:
+        - unit-test
+      resources:
+        inputs:
+          - name: source
+            resource: api-repo
+      params: 
+      - name: GOALS
+        value:
+          - install
+          - sonar:sonar
+          - -DskipTests=true
+          - -Dsonar.host.url=http://sonarqube-task-demo-sonarqube.apps-crc.testing
+          - -Dsonar.userHome=/tmp/sonar
+      - name: MAVEN_SETTINGS_CONFIGMAP
+        value: custom-maven-settings
+        
+    - name: extensive-functional-test
+      taskRef:
+        name: empty-task-stub
+      runAfter:
+        - unit-test
+        
+    - name: deploy-app-nexus
+      taskRef:
+        name: maven
+      runAfter:
+        - extensive-functional-test
+        - analysis-test-sonarqube
+      resources:
+        inputs:
+          - name: source
+            resource: api-repo
+      params: 
+      - name: GOALS
+        value:
+          - deploy
+          - -DskipTests=true
+          - -DaltDeploymentRepository=nexus::default::http://nexus-task-demo-nexus.apps-crc.testing/repository/releases/
+      - name: MAVEN_SETTINGS_CONFIGMAP
+        value: custom-maven-settings
+        
+        
+
+
+    - name: build-app
+      taskRef:
+        name: buildah
+        kind: ClusterTask
+      runAfter:
+        - extensive-functional-test
+        - analysis-test-sonarqube
+      resources:
+        inputs:
+          - name: source
+            resource: api-repo
+        outputs:
+          - name: image
+            resource: api-image
+      params:
+        - name: TLSVERIFY
+          value: "false"
+          
+
+    - name: apply-deployment-manifests
+      taskRef:
+        name: apply-manifests
+      resources:
+        inputs:
+          - name: source
+            resource: api-repo
+      runAfter:
+        - build-app
+        
+    - name: deploy
+      taskRef:
+        name: openshift-client
+      runAfter:
+        - apply-deployment-manifests
+      params:
+      - name: COMMANDS
+        value: |
+            oc expose svc/tekton-tasks-demo
+            oc scale deployment/tekton-tasks-demo --replicas=0
+            oc rollout status deployment/tekton-tasks-demo
+            oc scale deployment/tekton-tasks-demo --replicas=3
+            oc rollout status deployment/tekton-tasks-demo
+        
+
