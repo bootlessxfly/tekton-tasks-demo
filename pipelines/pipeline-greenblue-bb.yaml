@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
 metadata:
-  name: build-and-deploy-greenblue
+  name: build-and-deploy-greenblue-bb
 spec:
 #  serviceAccountName: build-bot
   resources:
@@ -11,7 +11,7 @@ spec:
       type: image
 
   tasks:
-    - name: unit-test
+    - name: BB-Unit-Test
       taskRef:
         name: maven
       resources:
@@ -24,11 +24,25 @@ spec:
       - name: MAVEN_SETTINGS_CONFIGMAP
         value: custom-maven-settings
         
+    - name: unit-test
+      taskRef:
+        name: empty-task-stub
+      runAfter:
+        - BB-Trigger-Build
+
+    - name: BB-Trigger-Build
+      taskRef:
+        name: empty-task-stub
+      runAfter:
+        - BB-Unit-Test
+        
+
+        
     - name: analysis-test-sonarqube
       taskRef:
         name: maven
       runAfter:
-        - unit-test
+        - BB-Trigger-Build
       resources:
         inputs:
           - name: source
@@ -48,7 +62,7 @@ spec:
       taskRef:
         name: empty-task-stub
       runAfter:
-        - unit-test
+        - BB-Trigger-Build
         
     - name: deploy-app-nexus
       taskRef:
@@ -56,6 +70,7 @@ spec:
       runAfter:
         - extensive-functional-test
         - analysis-test-sonarqube
+        - unit-test
       resources:
         inputs:
           - name: source
@@ -79,6 +94,7 @@ spec:
       runAfter:
         - extensive-functional-test
         - analysis-test-sonarqube
+        - unit-test
       resources:
         inputs:
           - name: source
@@ -121,10 +137,17 @@ spec:
       runAfter:
         - deploy-Green-PRE
         
+    - name: test-trigger
+      taskRef:
+        name: empty-task-stub
+      runAfter:
+        - deploy-Green-PRE
+        
     - name: deploy-Blue-PRD
       taskRef:
         name: empty-task-stub
       runAfter:
         - functional-testing-postdeploy
+        - test-trigger
         
 
