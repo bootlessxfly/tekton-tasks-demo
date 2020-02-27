@@ -3,7 +3,7 @@ FROM maven:3.6.0-jdk-8-slim as builder
 WORKDIR /build
 ADD . /build/
 
-RUN mvn package -s ./nexus_settings
+RUN mvn package -s ./nexus_settings.xml -DskipTests=true
 
 FROM scratch
 FROM registry.redhat.io/jboss-eap-7/eap72-openshift
