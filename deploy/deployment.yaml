@@ -4,12 +4,13 @@ metadata:
   annotations:
   labels:
     app: tekton-tasks-demo
-#    app.kubernetes.io/component: web
-#    app.kubernetes.io/instance: spring-petclinic
-#    app.kubernetes.io/name: spring-petclinic
-#    app.kubernetes.io/part-of: spring-petclinic
+    app.kubernetes.io/component: web
+    app.kubernetes.io/instance: tekton-tasks-demo
+    app.kubernetes.io/name: tekton-tasks-demo
+    app.kubernetes.io/part-of: test
     app.openshift.io/runtime: eap71
   name: tekton-tasks-demo
+  namsepace: openshift-pipelines
 spec:
   replicas: 1
   selector:
